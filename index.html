@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Força Bruta - GitHub Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Força Bruta - GitHub Pages</h2>
+    <form>
+        <label for="numDigits">Número de Dígitos da Senha:</label>
+        <input type="number" id="numDigits" name="numDigits" min="1" required>
+        
+        <label for="password">Senha Alvo:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="button" onclick="tryBruteForce()">Tentar Força Bruta</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        function tryBruteForce() {
+            var numDigits = document.getElementById("numDigits").value;
+            var password = document.getElementById("password").value;
+
+            var startTime = performance.now();
+
+            var allCombinations = generateAllCombinations(numDigits);
+            
+            for (var i = 0; i < allCombinations.length; i++) {
+                var attempt = allCombinations[i].join('');
+                if (attempt === password) {
+                    var endTime = performance.now();
+                    var elapsedTime = (endTime - startTime) / 1000; // convert to seconds
+
+                    displayResult(true, attempt, elapsedTime);
+                    return;
+                }
+            }
+
+            var endTime = performance.now();
+            var elapsedTime = (endTime - startTime) / 1000; // convert to seconds
+            displayResult(false, null, elapsedTime);
+        }
+
+        function generateAllCombinations(numDigits) {
+            var combinations = [];
+            var digits = "0123456789";
+
+            function generateHelper(currentCombination, remainingDigits) {
+                if (currentCombination.length === numDigits) {
+                    combinations.push(currentCombination.slice());
+                    return;
+                }
+
+                for (var i = 0; i < remainingDigits.length; i++) {
+                    currentCombination.push(remainingDigits[i]);
+                    generateHelper(currentCombination, remainingDigits);
+                    currentCombination.pop();
+                }
+            }
+
+            generateHelper([], digits.split(''));
+            return combinations;
+        }
+
+        function displayResult(success, password, elapsedTime) {
+            var resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = '';
+
+            if (success) {
+                resultDiv.innerHTML += `<p>Senha encontrada: ${password}</p>`;
+                resultDiv.innerHTML += `<p>Tempo decorrido: ${elapsedTime.toFixed(6)} segundos</p>`;
+            } else {
+                resultDiv.innerHTML += '<p>Senha não encontrada.</p>';
+                resultDiv.innerHTML += `<p>Tempo decorrido: ${elapsedTime.toFixed(6)} segundos</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
